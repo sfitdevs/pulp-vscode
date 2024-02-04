@@ -24,6 +24,7 @@
         "onStartupFinished"
     ],
     "main": "./extension.js",
+    "browser": "./web/extension.js",
     "contributes": {
         "commands": [
             {
