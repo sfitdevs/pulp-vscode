@@ -1,0 +1,58 @@
+{
+    "name": "pulp",
+    "displayName": "Pulp - Share Code",
+    "description": "Share your code seamlessly and effectively!",
+    "version": "1.1.0",
+    "publisher": "dedomil",
+    "icon": "media/logo.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sfitdevs/pulp-vscode.git"
+    },
+    "author": {
+        "name": "Aditya Yadav",
+        "email": "dedomil@skiff.com",
+        "url": "https://github.com/dedomil"
+    },
+    "engines": {
+        "vscode": "^1.81.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "pulp.create",
+                "title": "create and share the pulp!"
+            }
+        ]
+    },
+    "keywords": [
+        "share",
+        "pastebin",
+        "pulp"
+    ],
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "npm run lint",
+        "test": "node ./test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.1",
+        "@types/node": "16.x",
+        "@types/vscode": "^1.81.0",
+        "@vscode/test-electron": "^2.3.4",
+        "eslint": "^8.47.0",
+        "glob": "^10.3.3",
+        "mocha": "^10.2.0",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "cross-fetch": "^4.0.0"
+    }
+}
