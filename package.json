@@ -29,7 +29,11 @@
         "commands": [
             {
                 "command": "pulp.create",
-                "title": "create and share the pulp!"
+                "title": "pulp: create and share the pulp!"
+            },
+            {
+                "command": "pulp.open",
+                "title": "pulp: open a file from pulp!"
             }
         ]
     },

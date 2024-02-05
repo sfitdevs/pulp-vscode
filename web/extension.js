@@ -50,6 +50,23 @@ async function createPulp() {
     await showMessage(`pulp created successfully - ${resJson.key}.${resJson.language}`, ["open", "copy"], `${INSTANCE_URL}/${resJson.key}`);
 }
 
+async function openPulp() {
+    const code = await vscode.window.showInputBox({
+        placeHolder: '5-digit code for the pulp, ex: wdiex',
+        validateInput: text => {
+            return text.length == 5 ? null : "code must be 5-digit long.";
+        }
+    });
+
+    let response = await fetch(`${INSTANCE_URL}/api/${code}`);
+
+    if (!response.ok) return showError();
+
+    let { content } = await response.json();
+    const document = await vscode.workspace.openTextDocument({ content }); // todo: add auto language support
+    await vscode.window.showTextDocument(document);
+}
+
 function updateStatusBarItem() {
     if (!textEditor) pulpStatusBar.hide();
     pulpStatusBar.text = `$(file-add) Pulp`;
@@ -58,6 +75,7 @@ function updateStatusBarItem() {
 
 function activate({ subscriptions }) {
     subscriptions.push(vscode.commands.registerCommand("pulp.create", createPulp));
+    subscriptions.push(vscode.commands.registerCommand("pulp.open", openPulp));
     pulpStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     pulpStatusBar.command = "pulp.create";
     subscriptions.push(pulpStatusBar);
