@@ -1,5 +1,6 @@
 const vscode = require("vscode");
 const fetch = require("cross-fetch");
+const getIdentifier = require("./helpers/getIdentifier");
 const INSTANCE_URL = "https://pulp.deta.dev";
 
 let pulpStatusBar, textEditor;
@@ -63,8 +64,8 @@ async function openPulp() {
 
     if (!response.ok) return showError();
 
-    let { content } = await response.json();
-    const document = await vscode.workspace.openTextDocument({ content }); // todo: add auto language support
+    let { content, language: extension } = await response.json();
+    const document = await vscode.workspace.openTextDocument({ content, language: getIdentifier(extension) });
     await vscode.window.showTextDocument(document);
 }
 
