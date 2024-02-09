@@ -2,7 +2,7 @@
     "name": "pulp",
     "displayName": "Pulp - Share Code",
     "description": "Share your code seamlessly and effectively!",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "publisher": "dedomil",
     "icon": "media/logo.png",
     "repository": {

@@ -114,5 +114,5 @@ module.exports = (extension) => {
         return identifier.extension == extension;
     })
 
-    return match.identifier || "plaintext";
+    return match?.identifier || "plaintext";
 }
