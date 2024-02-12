@@ -73,9 +73,11 @@ function updateStatusBarItem(editor) {
     textEditor = editor;
     if (!textEditor) {
         pulpStatusBar.text = "$(file-code) Pulp";
+        pulpStatusBar.tooltip = "Open a file from pulp"
         pulpStatusBar.command = "pulp.open";
     } else {
         pulpStatusBar.text = "$(file-add) Pulp";
+        pulpStatusBar.tooltip = "Create a pulp of current text editor"
         pulpStatusBar.command = "pulp.create";
     }
 }

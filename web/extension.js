@@ -1,7 +1,123 @@
 const vscode = require("vscode");
 const INSTANCE_URL = "https://pulp.deta.dev";
 
+const identifierList = [
+    {
+        extension: "js",
+        identifier: "javascript"
+    },
+    {
+        extension: "jsx",
+        identifier: "javascriptreact"
+    },
+    {
+        extension: "c",
+        identifier: "c"
+    },
+    {
+        extension: "cpp",
+        identifier: "cpp"
+    },
+    {
+        extension: "java",
+        identifier: "java"
+    },
+    {
+        extension: "ts",
+        identifier: "typescript"
+    },
+    {
+        extension: "tsx",
+        identifier: "typescriptreact"
+    },
+    {
+        extension: "cs",
+        identifier: "csharp"
+    },
+    {
+        extension: "css",
+        identifier: "css"
+    },
+    {
+        extension: "go",
+        identifier: "go"
+    },
+    {
+        extension: "html",
+        identifier: "html"
+    },
+    {
+        extension: "json",
+        identifier: "json"
+    },
+    {
+        extension: "lua",
+        identifier: "lua"
+    },
+    {
+        extension: "php",
+        identifier: "php"
+    },
+    {
+        extension: "txt",
+        identifier: "plaintext"
+    },
+    {
+        extension: "ps1",
+        identifier: "powershell"
+    },
+    {
+        extension: "py",
+        identifier: "python"
+    },
+    {
+        extension: "r",
+        identifier: "r"
+    },
+    {
+        extension: "rs",
+        identifier: "rust"
+    },
+    {
+        extension: "scss",
+        identifier: "scss"
+    },
+    {
+        extension: "rb",
+        identifier: "ruby"
+    },
+    {
+        extension: "swift",
+        identifier: "swift"
+    },
+    {
+        extension: "sql",
+        identifier: "sql"
+    },
+    {
+        extension: "vue",
+        identifier: "vue"
+    },
+    {
+        extension: "yaml",
+        identifier: "yaml"
+    },
+    {
+        extension: "xml",
+        identifier: "xml"
+    },
+]
+
 let pulpStatusBar, textEditor;
+
+function getIdentifier(extension) {
+    let match = identifierList.find((identifier) => {
+        return identifier.extension == extension;
+    })
+
+    return match?.identifier || "plaintext";
+}
+
 
 function getLanguage() {
     let arrayOfPath = textEditor.document.fileName.split("\\");
@@ -37,7 +153,6 @@ async function showMessage(message, buttons, data) {
 }
 
 async function createPulp() {
-    textEditor = vscode.window.activeTextEditor;
     let content = getText();
     if (!content) return showError("error: editor is empty!");
     let language = getLanguage();
@@ -58,30 +173,37 @@ async function openPulp() {
         }
     });
 
+    if (!code) return;
     let response = await fetch(`${INSTANCE_URL}/api/${code}`);
 
-    if (!response.ok) return showError();
+    if (!response.ok) return showError("error: pulp not found");
 
-    let { content } = await response.json();
-    const document = await vscode.workspace.openTextDocument({ content }); // todo: add auto language support
+    let { content, language: extension } = await response.json();
+    const document = await vscode.workspace.openTextDocument({ content, language: getIdentifier(extension) });
     await vscode.window.showTextDocument(document);
 }
 
-function updateStatusBarItem() {
-    if (!textEditor) pulpStatusBar.hide();
-    pulpStatusBar.text = `$(file-add) Pulp`;
-    pulpStatusBar.show();
+function updateStatusBarItem(editor) {
+    textEditor = editor;
+    if (!textEditor) {
+        pulpStatusBar.text = "$(file-code) Pulp";
+        pulpStatusBar.tooltip = "Open a file from pulp"
+        pulpStatusBar.command = "pulp.open";
+    } else {
+        pulpStatusBar.text = "$(file-add) Pulp";
+        pulpStatusBar.tooltip = "Create a pulp of current text editor"
+        pulpStatusBar.command = "pulp.create";
+    }
 }
 
 function activate({ subscriptions }) {
     subscriptions.push(vscode.commands.registerCommand("pulp.create", createPulp));
     subscriptions.push(vscode.commands.registerCommand("pulp.open", openPulp));
     pulpStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-    pulpStatusBar.command = "pulp.create";
     subscriptions.push(pulpStatusBar);
-    updateStatusBarItem();
+    updateStatusBarItem(vscode.window.activeTextEditor);
+    pulpStatusBar.show();
     subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
-    subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateStatusBarItem));
 }
 
 function deactivate() { }
